@@ -1,0 +1,1 @@
+https://github.com/vsandrade/AspNET-Minimal-API/blob/master/RangoAgil.API/DbContexts/RangoDbContext.cs
