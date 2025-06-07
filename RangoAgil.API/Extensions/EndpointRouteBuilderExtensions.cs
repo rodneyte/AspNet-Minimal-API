@@ -25,7 +25,12 @@ namespace RangoAgil.API.Extensions
         {
             var ingradientesEndpoints = endpointRouteBuilder.MapGroup("/rangos/{rangoId:int}/ingredientes");
 
-            ingradientesEndpoints.Map("", IngredientesHandlers.GetRangoIngredientesAsync);
+            ingradientesEndpoints.MapGet("", IngredientesHandlers.GetIngredientesAsync);
+
+            ingradientesEndpoints.MapPost("", () =>
+            {
+                throw new NotImplementedException();
+            });
 
         }
     }

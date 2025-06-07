@@ -8,7 +8,7 @@ namespace RangoAgil.API.EndpointHandlers;
 
 public static class IngredientesHandlers
 {
-    public static async Task<Results<NotFound, Ok<IEnumerable<IngredienteDTO>>>> GetRangoIngredientesAsync(
+    public static async Task<Results<NotFound, Ok<IEnumerable<IngredienteDTO>>>> GetIngredientesAsync(
             RangoDbContext rangoDbContext,
             IMapper mapper,
             int rangoId)
