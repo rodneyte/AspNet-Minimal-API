@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RangoAgil.API.DbContexts;
-using RangoAgil.API.EndpointHandlers;
 using RangoAgil.API.Extensions;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
