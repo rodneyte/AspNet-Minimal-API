@@ -1,4 +1,5 @@
-﻿using RangoAgil.API.EndpointFilters;
+﻿using Microsoft.AspNetCore.Identity;
+using RangoAgil.API.EndpointFilters;
 using RangoAgil.API.EndpointHandlers;
 
 namespace RangoAgil.API.Extensions
@@ -7,17 +8,36 @@ namespace RangoAgil.API.Extensions
     {
         public static void RegisterRangosEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
         {
-            var ragosEndpoints = endpointRouteBuilder.MapGroup("/rangos");
-            var ragosComIdEndpoints = ragosEndpoints.MapGroup("/{rangoId:int}");
+            endpointRouteBuilder.MapGroup("/identity/").MapIdentityApi<IdentityUser>();
+
+            endpointRouteBuilder.MapGet("/pratos/{pratoid:int}", (int pratoid = 0) => $"O prato {pratoid} é delicioso!")
+                .WithOpenApi(operation =>
+                {
+                    operation.Deprecated = true;
+                    return operation;
+                })
+                .WithSummary("Este endpoint esta deprecated e será descontinuado na versão 2 desta API")
+                .WithDescription("Por favor utilize a outra rota desta API sendo ela /rangos/{rangoId} para evitar maiores transtornos futuros");
+
+            var rangosEndpoints = endpointRouteBuilder.MapGroup("/rangos")
+                .RequireAuthorization();
+            var rangosComIdEndpoints = rangosEndpoints.MapGroup("/{rangoId:int}")
+                .RequireAuthorization();
+
+            rangosEndpoints.MapGet("", RangosHandlers.GetRangosAsync);
+          
 
             var rangosComIdEndpointsAndLockFilterEndpoints = endpointRouteBuilder.MapGroup("/rangos/{rangoId:int}")
+                .RequireAuthorization("RequireAdminFromBrasil")
+                .RequireAuthorization()
                  .AddEndpointFilter(new RangoIsLockedFilter(9))
                  .AddEndpointFilter(new RangoIsLockedFilter(7));
 
-            
-            ragosComIdEndpoints.MapGet("", RangosHandlers.GetRangoById).WithName("GetRangos");
 
-            ragosEndpoints.MapPost("", RangosHandlers.CreateRangosAsync)
+            rangosComIdEndpoints.MapGet("", RangosHandlers.GetRangoById).WithName("GetRangos")
+                .AllowAnonymous();
+
+            rangosEndpoints.MapPost("", RangosHandlers.CreateRangosAsync)
                 .AddEndpointFilter<ValidateAnnotationFilter>();
 
             rangosComIdEndpointsAndLockFilterEndpoints.MapPut("", RangosHandlers.UpdateRangoAsync);
@@ -30,7 +50,8 @@ namespace RangoAgil.API.Extensions
 
         public static void RegisterIngredientesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
         {
-            var ingradientesEndpoints = endpointRouteBuilder.MapGroup("/rangos/{rangoId:int}/ingredientes");
+            var ingradientesEndpoints = endpointRouteBuilder.MapGroup("/rangos/{rangoId:int}/ingredientes")
+                .RequireAuthorization();
 
             ingradientesEndpoints.MapGet("", IngredientesHandlers.GetIngredientesAsync);
 

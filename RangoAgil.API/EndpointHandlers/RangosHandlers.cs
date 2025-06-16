@@ -14,7 +14,8 @@ public static class RangosHandlers
         (RangoDbContext rangoDbContext,
         ILogger<RangoDTO> logger,
         IMapper mapper,
-        [FromQuery(Name = "Name")] string? rangoNome)
+        [FromQuery(Name = "Name")] string? rangoNome
+        )
     {
         var rangosEntity = await rangoDbContext.Rangos
                                    .Where(x => rangoNome == null || x.Nome.ToLower().Contains(rangoNome.ToLower()))
